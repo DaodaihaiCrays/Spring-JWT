@@ -36,4 +36,9 @@ public class AuthenticationController {
         // Tạo token với username, phone_number, email và role
         return jwtUtil.generateToken(authenticationRequest.getUsername(), phoneNumber, email, role);
     }
+
+    @GetMapping("/hello")
+    public String sayHello() {
+        return "Hello";
+    }
 }
