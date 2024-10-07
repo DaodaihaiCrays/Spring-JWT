@@ -14,18 +14,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
+
 @Configuration
 public class AppConfig {
-    @Bean
-    public UserDetailsService userDetailsService(){
-        UserDetails user= User.builder()
-                .username("user123@gmail.com")
-                .password(passwordEncoder().encode("your_password_here"))
-                .roles("USER")
-                .build();
 
-        return new InMemoryUserDetailsManager(user);
-    }
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -37,20 +31,3 @@ public class AppConfig {
         return builder.getAuthenticationManager();
     }
 }
-
-//@Configuration
-//public class AppConfig {
-//
-//    @Autowired
-//    private CustomUserDetailsService customUserDetailsService;
-//
-//    @Bean
-//    public PasswordEncoder passwordEncoder(){
-//        return new BCryptPasswordEncoder();
-//    }
-//
-//    @Bean
-//    public AuthenticationManager authenticationManager(AuthenticationConfiguration builder) throws Exception {
-//        return builder.getAuthenticationManager();
-//    }
-//}

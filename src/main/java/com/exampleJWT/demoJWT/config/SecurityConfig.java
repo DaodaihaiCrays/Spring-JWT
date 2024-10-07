@@ -20,14 +20,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // configuration
-        http.csrf(csrf->csrf.disable())
-                .cors(cors->cors.disable())
-                .authorizeHttpRequests(auth->auth.requestMatchers("/home/**").authenticated()
-                        .requestMatchers("/login").permitAll().anyRequest()
-                        .authenticated())
-                .exceptionHandling(ex->ex.authenticationEntryPoint(point))
-                .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        http.addFilterBefore(filter,UsernamePasswordAuthenticationFilter.class);
+        http.csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/home/**").authenticated()  // Các yêu cầu tới /home/** yêu cầu phải đăng nhập
+                        .requestMatchers("/login", "/register").permitAll()  // Cho phép truy cập không cần xác thực tới /login và /register
+                        .anyRequest().authenticated())  // Các yêu cầu khác phải được xác thực
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(point))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }
