@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
+
 @RestController
 public class AuthController {
 
@@ -62,6 +64,12 @@ public class AuthController {
     public ResponseEntity<String> register(@RequestBody User user) {
         // Mã hóa mật khẩu trước khi lưu
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        // Nếu không có vai trò được chỉ định, mặc định là USER
+        if (user.getRole() == null || user.getRole().isEmpty()) {
+            user.setRole("USER");
+        }
+
         userService.saveUser(user);
         return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
     }

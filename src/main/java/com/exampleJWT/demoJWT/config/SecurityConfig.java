@@ -16,16 +16,15 @@ public class SecurityConfig {
     private JWTAthenticationEntryPoint point;
     @Autowired
     private JWTAuthenticationFilter filter;
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // configuration
-        http.csrf(csrf -> csrf.disable())
+        http
+                .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/home/**").authenticated()  // Các yêu cầu tới /home/** yêu cầu phải đăng nhập
-                        .requestMatchers("/login", "/register").permitAll()  // Cho phép truy cập không cần xác thực tới /login và /register
-                        .anyRequest().authenticated())  // Các yêu cầu khác phải được xác thực
+                        .requestMatchers("/admin/**").hasRole("ADMIN")  // Chỉ ADMIN mới được truy cập đường dẫn bắt đầu với /admin
+                        .requestMatchers("/login", "/register").permitAll()  // Cho phép truy cập không cần đăng nhập
+                        .anyRequest().authenticated())  // Các yêu cầu khác phải đăng nhập
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(point))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
