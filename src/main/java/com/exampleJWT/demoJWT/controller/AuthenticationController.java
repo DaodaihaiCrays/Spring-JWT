@@ -32,7 +32,7 @@ public class AuthenticationController {
         String phoneNumber = "123456789";  // Dữ liệu giả
         String email = "user@example.com";  // Dữ liệu giả
         String role = "USER";  // Dữ liệu giả
-
+        System.out.println("hiiii");
         // Tạo token với username, phone_number, email và role
         return jwtUtil.generateToken(authenticationRequest.getUsername(), phoneNumber, email, role);
     }
