@@ -21,6 +21,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+
 @Component
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
     private Logger logger = LoggerFactory.getLogger(OncePerRequestFilter.class);
@@ -80,9 +81,19 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 //        filterChain.doFilter(request, response);
 //    }
 
+//   Cách 2
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // Authorization=Bearer <token>
+        // Lấy URI của yêu cầu
+        String requestURI = request.getRequestURI();
+
+        // Bỏ qua JWTAuthenticationFilter cho các endpoint không cần xác thực
+//        if (requestURI.equals("/login") || requestURI.equals("/register")) {
+//            filterChain.doFilter(request, response);  // Bỏ qua filter và tiếp tục chuỗi xử lý
+//            return;
+//        }
+
         String requestHeader = request.getHeader("Authorization");
         logger.info(" Header :  {}", requestHeader);
         String username = null;
