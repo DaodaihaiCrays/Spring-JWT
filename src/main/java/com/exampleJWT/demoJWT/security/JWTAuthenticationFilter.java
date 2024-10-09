@@ -1,6 +1,7 @@
 package com.exampleJWT.demoJWT.security;
 
 import com.exampleJWT.demoJWT.service.CustomUserDetailsService;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
@@ -60,18 +61,22 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            //fetch user detail from username
             UserDetails userDetails = this.customUserDetailsService.loadUserByUsername(username);
+
+            // Lấy userId từ token
+            Claims claims = jwtHelper.getAllClaimsFromToken(token);
+            Long userId = claims.get("userId", Long.class);  // Lấy ID người dùng từ token
+
             Boolean validateToken = this.jwtHelper.validateToken(token, userDetails);
             if (validateToken) {
-                //set the authentication
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                // Sử dụng ID người dùng nếu cần
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-            } else {
-                logger.info("Validation fails !!");
             }
         }
+
         filterChain.doFilter(request, response);
     }
 }

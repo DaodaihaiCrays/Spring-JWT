@@ -2,9 +2,11 @@ package com.exampleJWT.demoJWT.config;
 
 import com.exampleJWT.demoJWT.model.JwtRequest;
 import com.exampleJWT.demoJWT.model.JwtResponse;
+import com.exampleJWT.demoJWT.model.RefreshToken;
 import com.exampleJWT.demoJWT.model.User;
 import com.exampleJWT.demoJWT.security.JWTHelper;
 import com.exampleJWT.demoJWT.service.CustomUserDetailsService;
+import com.exampleJWT.demoJWT.service.RefreshTokenService;
 import com.exampleJWT.demoJWT.service.UserRepository;
 import com.exampleJWT.demoJWT.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,24 +43,37 @@ public class AuthController {
     @Autowired
     private JWTHelper helper;
 
+    @Autowired
+    private RefreshTokenService refreshTokenService;
+
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest request) {
+        // Xác thực thông tin đăng nhập
         this.doAuthenticate(request.getEmail(), request.getPassword());
 
+        // Lấy thông tin người dùng sau khi xác thực thành công
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
-        String token = this.helper.generateToken(userDetails);
 
-        // Dùng Lombok - tạo đối tượng JwtResponse
+        // Lấy thông tin ID của người dùng từ cơ sở dữ liệu
+        User user = userService.getUserByEmail(request.getEmail()).orElseThrow();
+
+        // Tạo Access Token với ID người dùng
+        String accessToken = this.helper.generateToken(userDetails, user.getId());
+
+        // Tạo Refresh Token và lưu vào cơ sở dữ liệu với ID người dùng
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
+
+        // Tạo JwtResponse để trả về Access Token và Refresh Token
         JwtResponse response = JwtResponse.builder()
-                .jwtToken(token)
-                .username(userDetails.getUsername()).build();
-
-        // Nếu không dùng Lombok
-//        JwtResponse response = new JwtResponse(token, userDetails.getUsername());
-//        return new ResponseEntity<>(response, HttpStatus.OK);
+                .jwtToken(accessToken)
+                .refreshToken(refreshToken.getToken())
+                .username(userDetails.getUsername())
+                .build();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody User user) {
