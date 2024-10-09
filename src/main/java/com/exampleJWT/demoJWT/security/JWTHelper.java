@@ -29,12 +29,19 @@ public class JWTHelper {
         return getClaimFromToken(token, Claims::getExpiration);
     }
 
+    // Lấy userId từ JWT token
+    public Long getUserIdFromToken(String token) {
+        return getClaimFromToken(token, claims -> claims.get("userId", Long.class));
+    }
+
+    // lấy một giá trị cụ thể từ các Claims
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
     }
 
     //for retrieveing any information from token we will need the secret key
+    // Trả về tất cả các Claims từ token
     Claims getAllClaimsFromToken(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
