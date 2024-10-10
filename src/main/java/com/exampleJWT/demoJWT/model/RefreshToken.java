@@ -22,9 +22,19 @@ public class RefreshToken {
     private String token;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "userID", referencedColumnName = "id", nullable = false)
     private User user;
 
     @Column(nullable = false)
     private Instant expiryDate;
+
+    @Override
+    public String toString() {
+        return "RefreshToken{" +
+                "id=" + id +
+                ", token='" + token + '\'' +
+                ", user=" + user +
+                ", expiryDate=" + expiryDate +
+                '}';
+    }
 }

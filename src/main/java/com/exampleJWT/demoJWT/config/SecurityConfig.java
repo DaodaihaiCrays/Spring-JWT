@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register").permitAll()  // Cho phép truy cập mà không cần xác thực
+                        .requestMatchers("/login", "/register","/refresh-token").permitAll()  // Cho phép truy cập mà không cần xác thực
                         .requestMatchers("/admin/**").hasRole("ADMIN")  // Chỉ ADMIN mới được truy cập
                         .anyRequest().authenticated())  // Các yêu cầu khác phải đăng nhập
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(point))

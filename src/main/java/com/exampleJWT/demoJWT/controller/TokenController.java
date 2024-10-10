@@ -25,8 +25,11 @@ public class TokenController {
 
     @PostMapping("/refresh-token")
     public ResponseEntity<?> refreshToken(@RequestBody String refreshToken) {
+
         return refreshTokenService.findByToken(refreshToken)
                 .map(token -> {
+                    System.out.println(token);
+                    System.out.println("***********");
                     if (refreshTokenService.isRefreshTokenExpired(token)) {
                         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Refresh token is expired!");
                     }
@@ -43,6 +46,7 @@ public class TokenController {
                     // Trả về response chứa Access Token mới
                     JwtResponse response = JwtResponse.builder()
                             .jwtToken(newAccessToken)
+                            .refreshToken(refreshToken)
                             .username(email)
                             .build();
 
