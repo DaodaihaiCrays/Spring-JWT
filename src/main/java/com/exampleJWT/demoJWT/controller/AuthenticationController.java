@@ -18,6 +18,11 @@ public class AuthenticationController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @GetMapping("/test")
+    public String hello() {
+        return "Hello";
+    }
+
     @PostMapping("/login")
     public String createToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
         try {

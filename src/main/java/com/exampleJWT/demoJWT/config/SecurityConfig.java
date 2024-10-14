@@ -17,7 +17,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())  // Vô hiệu hóa CSRF nếu cần
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login").permitAll()  // Cho phép truy cập vào /login
+                        .requestMatchers("/login", "test").permitAll()  // Cho phép truy cập vào /login
                         .anyRequest().authenticated());         // Các yêu cầu khác cần xác thực
 
         return http.build();
